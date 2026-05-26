@@ -27,8 +27,9 @@ ask() {
     done
 }
 
+outdir=".out/"
 
-
+### check preconditions
 
 if ! [[ -e "./template" ]]; then
 	echo "template folder not found" >&2
@@ -47,29 +48,42 @@ if ! command -v typst &> /dev/null ; then
     exit 1
 fi
 
+# check if outdir exists
+if ! [[ -e $outdir ]]; then
+    echo "output directory $outdir not found, creating it..."
+    mkdir $outdir
+fi
 
-ask 'dir name for this application: ' 
-#read -r -pshort_name
-short_name=$ask_result
 
-echo "short_name is $short_name"
+### create application directory
+
+# creates a directory for this applicatio in the out folder
+ask "dir name for this application: "
+application_name=$ask_result
+echo "folder name for this application is $application_name"
+outpath="$outdir$application_name"
 
 # make sure dir does not exist
-if [[ -e "$short_name" ]]; then
-	echo "short name $short_name already exists" >&2
+if [[ -e "$outpath" ]]; then
+	echo "application name at location $outpath already exists" >&2
 	exit 1
 else
-	echo "$short_name is available!"
+	echo "$application_name is available!"
 fi
 
 # create dir
-mkdir $short_name
+mkdir -p $outpath
+
+
+### copy over template files
 
 # copy typst templates
-cp template/* $short_name/
+cp template/* $outdir
 # copy static assets
-cp assets/* $short_name/
-echo "Created new application at location $short_name"
+cp assets/* $outdir
+echo "Created new application at location $outdir"
+
+
 
 
 # check if in interactive mode
