@@ -1,0 +1,123 @@
+#! /usr/bin/env bash
+
+# helper script to generate new applications from template
+# ideas:
+# ask for short-name of new application
+# copy templates from template directory
+# 
+# interactive mode to fill out cover letter
+# add placerholders in typst document
+# compile cover letter with typst
+# give url as an argument to the job listing to archive it automatically
+# curl url and create pdf from output?
+
+# make sure the expected folders are in this directory
+
+ask() {
+    # while loop for when adding validation/options
+    while true ; do
+        read -r -p "$1 [enter to skip]: " result
+        # no result/skipped
+        #if [[ -z $result ]]; then
+        #    ask_result=""
+        #fi
+        ask_result=$result
+        return
+
+    done
+}
+
+
+
+
+if ! [[ -e "./template" ]]; then
+	echo "template folder not found" >&2
+    exit 1
+fi
+
+
+if ! [[ -e "./assets" ]]; then
+	echo "assets folder not found" >&2
+    exit 1
+fi
+
+# check if typst exists
+if ! command -v typst &> /dev/null ; then
+    echo "typst not found. Is it installed?"
+    exit 1
+fi
+
+
+ask 'dir name for this application: ' 
+#read -r -pshort_name
+short_name=$ask_result
+
+echo "short_name is $short_name"
+
+# make sure dir does not exist
+if [[ -e "$short_name" ]]; then
+	echo "short name $short_name already exists" >&2
+	exit 1
+else
+	echo "$short_name is available!"
+fi
+
+# create dir
+mkdir $short_name
+
+# copy typst templates
+cp template/* $short_name/
+# copy static assets
+cp assets/* $short_name/
+echo "Created new application at location $short_name"
+
+
+# check if in interactive mode
+if ! [[ $* == *-*i* ]]; then
+	echo "done, interactive mode not enabled."
+	exit 0
+fi
+
+echo "Starting interactive mode"
+
+# prompt question
+# save answer
+# replace all placeholders with answers
+# map answers to placeholders
+# map placeholders to questions
+# question -> answer -> placeholder
+# placeholder -> question; placeholder -> answer
+
+# declare -A answers
+
+declare -A questions
+
+questions['$PLACEHOLDER_LANG_STR']='What language will this be written in? (en/de)'
+questions['$PLACEHOLDER_RECIPIENT_NAME']='RECIPIENT Name 1'
+questions['$PLACEHOLDER_RECIPIENT_NAME2']='RECIPIENT Name 2'
+questions['$PLACEHOLDER_RECIPIENT_STREET']='RECIPIENT Street'
+questions['$PLACEHOLDER_RECIPIENT_POSTCODE']='RECIPIENT postcode and city'
+questions['$PLACEHOLDER_RECIPIENT_COUNTRY']='RECIPIENT country'
+questions['$PLACEHOLDER_SUBJECT_STR']='Subject Line for this letter: '
+questions['$PLACEHOLDER_OPENING']="The opening paragraph of your application.
+Include where you found the application, the job title you are applying for,
+interest and appeal quickly and succinctly ( what I bring to the table )."
+questions['$PLACEHOLDER_MAIN']='The main paragraph: highlight relevant background, key achievements, skills and specialties.
+Should be relevant to position or at least the field, focus on 1-2 details with measurable impact.'
+questions['$PLACEHOLDER_CLOSING']='Closing paragraph: final key achievemt or skill.
+Summarise a specific story or anecdote and show transferable skills or relatable experiences.'
+questions['$PLACEHOLDER_STARTDATE']='When can you begin?'
+
+#echo "${questions[@]}"
+#echo "${!questions[*]}"
+
+#printf '%s\n' "${questions[@]}"
+#echo "${questions['$PLACEHOLDER_OPENING']}"
+
+for question in "${questions[@]}"; do
+	read -r -p "${question}  :"$'\n' 
+	echo "You answered: ${REPLY}"
+done
+
+echo "Answers parsed and thrown away. Thank you for using this serice! :)"
+
