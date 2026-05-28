@@ -135,3 +135,15 @@ done
 
 echo "Answers parsed and thrown away. Thank you for using this serice! :)"
 
+
+# for later
+# initial compile and open pdf in background
+#typst compile $app_path/letter.typ && open $app_path/letter.pdf &
+
+# start watching pdf in background
+#echo "starting background watch"
+#typst watch $app_path/letter.typ &
+
+
+
+
