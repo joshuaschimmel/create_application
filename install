@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# creates symlink for this user
+ln -s -t ~/.local/bin ./create_application 
+
