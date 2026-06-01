@@ -16,7 +16,7 @@
 ask() {
     # while loop for when adding validation/options
     while true ; do
-        read -r -p "$1 [enter to skip]: " result
+        read -r -p "$1: " result
         # no result/skipped
         #if [[ -z $result ]]; then
         #    ask_result=""
@@ -49,10 +49,10 @@ if ! command -v typst &> /dev/null ; then
 fi
 
 # check if outdir exists
-if ! [[ -e $outdir ]]; then
-    echo "output directory $outdir not found, creating it..."
-    mkdir $outdir
-fi
+#if ! [[ -e $outdir ]]; then
+#    echo "output directory $outdir not found, creating it..."
+#    mkdir $outdir
+#fi
 
 
 ### create application directory
@@ -72,15 +72,15 @@ else
 fi
 
 # create application directory
-mkdir -p $app_path
+#mkdir -p $app_path
 
 
 ### copy over template files
 
 # copy typst templates
-cp template/* $app_path
+#cp template/* $app_path
 # copy static assets
-cp assets/* $app_path
+#cp assets/* $app_path
 echo "Created new application at location $app_path"
 
 
@@ -92,7 +92,11 @@ if ! [[ $* == *-*i* ]]; then
 	exit 0
 fi
 
-echo "Starting interactive mode"
+echo "Starting interactive mode..."
+sleep 2
+
+
+clear
 
 # prompt question
 # save answer
@@ -102,38 +106,104 @@ echo "Starting interactive mode"
 # question -> answer -> placeholder
 # placeholder -> question; placeholder -> answer
 
-# declare -A answers
 
-declare -A questions
+echo ""
+echo "What language will this be written in?"
+echo "(Does not change this scirpt's text)"
+echo ""
+ask "Language? (en/de)"
+PLACEHOLDER_LANG_STR=$ask_result
 
-questions['$PLACEHOLDER_LANG_STR']='What language will this be written in? (en/de)'
-questions['$PLACEHOLDER_RECIPIENT_NAME']='RECIPIENT Name 1'
-questions['$PLACEHOLDER_RECIPIENT_NAME2']='RECIPIENT Name 2'
-questions['$PLACEHOLDER_RECIPIENT_STREET']='RECIPIENT Street'
-questions['$PLACEHOLDER_RECIPIENT_POSTCODE']='RECIPIENT postcode and city'
-questions['$PLACEHOLDER_RECIPIENT_COUNTRY']='RECIPIENT country'
-questions['$PLACEHOLDER_SUBJECT_STR']='Subject Line for this letter: '
-questions['$PLACEHOLDER_OPENING']="The opening paragraph of your application.
-Include where you found the application, the job title you are applying for,
-interest and appeal quickly and succinctly ( what I bring to the table )."
-questions['$PLACEHOLDER_MAIN']='The main paragraph: highlight relevant background, key achievements, skills and specialties.
-Should be relevant to position or at least the field, focus on 1-2 details with measurable impact.'
-questions['$PLACEHOLDER_CLOSING']='Closing paragraph: final key achievemt or skill.
-Summarise a specific story or anecdote and show transferable skills or relatable experiences.'
-questions['$PLACEHOLDER_STARTDATE']='When can you begin?'
 
-#echo "${questions[@]}"
-#echo "${!questions[*]}"
+echo ""
+echo "RECIPIENT ADDRESS" 
+echo "Recipient Line 1 (Name)"
+echo ""
 
-#printf '%s\n' "${questions[@]}"
-#echo "${questions['$PLACEHOLDER_OPENING']}"
+ask "Name"
+PLACEHOLDER_RECIPIENT_NAME=$ask_result
 
-for question in "${questions[@]}"; do
-	read -r -p "${question}  :"$'\n' 
-	echo "You answered: ${REPLY}"
-done
+echo ""
+echo "Recipient Line 2 (Name, additional)"
+echo ""
 
-echo "Answers parsed and thrown away. Thank you for using this serice! :)"
+ask "Name, second line"
+PLACEHOLDER_RECIPIENT_NAME2=$ask_result
+
+echo ""
+echo "Recipient Street and house number"
+echo ""
+ask "street"
+PLACEHOLDER_RECIPIENT_STREET=$ask_result
+
+echo ""
+echo "Recipient postcode and city"
+echo ""
+ask "city"
+PLACEHOLDER_RECIPIENT_POSTCODE=$ask_result
+
+echo ""
+echo "Recipient country"
+echo ""
+ask "country"
+PLACEHOLDER_RECIPIENT_COUNTRY=$ask_result
+
+echo ""
+echo ""
+echo "Starting with the letter itself."
+echo "What is the subject of this letter?"
+echo "Ex: Application as Software Engineer"
+echo ""
+
+ask "Subject"
+PLACEHOLDER_SUBJECT_STR=$ask_result
+
+echo ""
+echo "Opening Paragraph"
+echo "Include where you found the application, the job title you are applying for, "
+echo "interest and appeal quickly and succinctly (what you bring to the table)."
+echo ""
+# TODO example
+ask "Opening"
+PLACEHOLDER_OPENING=$ask_result
+
+echo ""
+echo "Main Body"
+echo "Highlight relevant background, key achievements, skills and specialties."
+echo "Should be relevant to position or at least the field, focus on 1-2 details with measurable impact."
+echo ""
+# TODO example
+ask "Main"
+PLACEHOLDER_MAIN=$ask_result
+
+echo ""
+echo "Closing Paragraph"
+echo "Final key achievemt or skill."
+echo "Summarise a specific story or anecdote and show transferable skills or relatable experiences."
+echo ""
+# TODO example
+ask "Closing"
+PLACEHOLDER_CLOSING=$ask_result
+
+echo ""
+echo "Start Date"
+echo "When can you begin?"
+echo "Ex: 2026-02-01 | 01.02.2026"
+echo ""
+
+ask "Start"
+PLACEHOLDER_STARTDATE=$ask_result
+
+
+echo "Done! Unfortunately, the rest is not yet implemented"
+# TODO replace variables in letter template
+# TODO compile letter template
+# TODO ask to open compiled letter
+# TODO show errors if compilation failed
+
+
+
+
 
 
 # for later
