@@ -27,6 +27,12 @@ ask() {
     done
 }
 
+replace() {
+    # uses indirect parameter expansion to replace the variable with its value
+    # see https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html#Shell-Parameter-Expansion
+    sed -i "s/\<$1\>/${!1}/g" "${app_path}/letter.typ"
+}
+
 outdir="./out/"
 
 ### check preconditions
@@ -49,10 +55,10 @@ if ! command -v typst &> /dev/null ; then
 fi
 
 # check if outdir exists
-#if ! [[ -e $outdir ]]; then
-#    echo "output directory $outdir not found, creating it..."
-#    mkdir $outdir
-#fi
+if ! [[ -e $outdir ]]; then
+    echo "output directory $outdir not found, creating it..."
+    mkdir $outdir
+fi
 
 
 ### create application directory
@@ -72,15 +78,15 @@ else
 fi
 
 # create application directory
-#mkdir -p $app_path
+mkdir -p $app_path
 
 
 ### copy over template files
 
 # copy typst templates
-#cp template/* $app_path
+cp template/* $app_path
 # copy static assets
-#cp assets/* $app_path
+cp assets/* $app_path
 echo "Created new application at location $app_path"
 
 
@@ -111,9 +117,10 @@ echo ""
 echo "What language will this be written in?"
 echo "(Does not change this scirpt's text)"
 echo ""
+
 ask "Language? (en/de)"
 PLACEHOLDER_LANG_STR=$ask_result
-
+replace PLACEHOLDER_LANG_STR
 
 echo ""
 echo "RECIPIENT ADDRESS" 
@@ -122,6 +129,7 @@ echo ""
 
 ask "Name"
 PLACEHOLDER_RECIPIENT_NAME=$ask_result
+replace PLACEHOLDER_RECIPIENT_NAME
 
 echo ""
 echo "Recipient Line 2 (Name, additional)"
@@ -129,24 +137,28 @@ echo ""
 
 ask "Name, second line"
 PLACEHOLDER_RECIPIENT_NAME2=$ask_result
+replace PLACEHOLDER_RECIPIENT_NAME2
 
 echo ""
 echo "Recipient Street and house number"
 echo ""
 ask "street"
 PLACEHOLDER_RECIPIENT_STREET=$ask_result
+replace PLACEHOLDER_RECIPIENT_STREET
 
 echo ""
 echo "Recipient postcode and city"
 echo ""
 ask "city"
 PLACEHOLDER_RECIPIENT_POSTCODE=$ask_result
+replace PLACEHOLDER_RECIPIENT_POSTCODE
 
 echo ""
 echo "Recipient country"
 echo ""
 ask "country"
 PLACEHOLDER_RECIPIENT_COUNTRY=$ask_result
+replace PLACEHOLDER_RECIPIENT_COUNTRY
 
 echo ""
 echo ""
@@ -157,6 +169,7 @@ echo ""
 
 ask "Subject"
 PLACEHOLDER_SUBJECT_STR=$ask_result
+replace PLACEHOLDER_SUBJECT_STR
 
 echo ""
 echo "Opening Paragraph"
@@ -166,6 +179,7 @@ echo ""
 # TODO example
 ask "Opening"
 PLACEHOLDER_OPENING=$ask_result
+replace PLACEHOLDER_OPENING
 
 echo ""
 echo "Main Body"
@@ -175,6 +189,7 @@ echo ""
 # TODO example
 ask "Main"
 PLACEHOLDER_MAIN=$ask_result
+replace PLACEHOLDER_MAIN
 
 echo ""
 echo "Closing Paragraph"
@@ -184,6 +199,7 @@ echo ""
 # TODO example
 ask "Closing"
 PLACEHOLDER_CLOSING=$ask_result
+replace PLACEHOLDER_CLOSING
 
 echo ""
 echo "Start Date"
@@ -193,15 +209,12 @@ echo ""
 
 ask "Start"
 PLACEHOLDER_STARTDATE=$ask_result
-
+replace PLACEHOLDER_STARTDATE
 
 echo "Done! Unfortunately, the rest is not yet implemented"
-# TODO replace variables in letter template
 # TODO compile letter template
 # TODO ask to open compiled letter
 # TODO show errors if compilation failed
-
-
 
 
 
